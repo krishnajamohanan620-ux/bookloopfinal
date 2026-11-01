@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookLoop — Campus Book Exchange | Login</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="auth-wrapper">
+        <div class="auth-card">
+            <!-- Header -->
+            <div class="auth-header">
+                <div class="auth-brand">
+                    <span>📚</span>
+                    <span>BookLoop</span>
+                </div>
+                <p class="auth-subtitle">The College Campus Book Exchange Platform</p>
+            </div>
+
+            <!-- Tabs: Login / Create Account -->
+            <div class="auth-tabs">
+                <a th:href="@{/login}" class="auth-tab active">Sign In</a>
+                <a th:href="@{/register}" class="auth-tab">Create Account</a>
+            </div>
+
+            <div class="auth-body">
+                <!-- Alerts -->
+                <div th:if="${loginError}" class="alert alert-danger">
+                    <span>⚠️</span>
+                    <span th:text="${loginError}">Invalid email or password.</span>
+                </div>
+
+                <div th:if="${logoutMessage}" class="alert alert-info">
+                    <span>ℹ️</span>
+                    <span th:text="${logoutMessage}">You have been logged out.</span>
+                </div>
+
+                <!-- Login Form -->
+                <form th:action="@{/login}" method="post">
+                    <div class="form-group">
+                        <label class="form-label" for="email">Campus Email</label>
+                        <input type="email" id="email" name="email" class="form-control"
+                               placeholder="e.g. student@campus.edu" required autofocus>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="password">Password</label>
+                        <input type="password" id="password" name="password" class="form-control"
+                               placeholder="Enter your password" required>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block" style="margin-top: 1.5rem;">
+                        Sign In to BookLoop
+                    </button>
+                </form>
+
+                <!-- Demo helper -->
+                <div style="margin-top: 1.5rem; padding: 0.9rem; background: #f8fafc; border-radius: 8px; border: 1px dashed #cbd5e1; font-size: 0.82rem; color: #475569;">
+                    <strong>💡 Demo Credentials:</strong><br>
+                    Email: <code>student@campus.edu</code><br>
+                    Password: <code>student123</code>
+                </div>
+
+                <div style="text-align: center; margin-top: 1.5rem; font-size: 0.9rem; color: #64748b;">
+                    Don't have an account yet?
+                    <a th:href="@{/register}" style="font-weight: 600;">Create Account</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

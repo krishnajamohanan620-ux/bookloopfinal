@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookLoop — Sell or Exchange a Book</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <div th:replace="~{fragments/navbar :: navbar('sell')}"></div>
+
+    <main class="main-content">
+        <div class="page-container">
+            <div class="form-card">
+                <div class="form-header">
+                    <h1 class="form-title">🏷️ Sell, Rent, or Exchange a Book</h1>
+                    <p class="form-subtitle">List your academic textbook so other students in your college can find and purchase or swap it.</p>
+                </div>
+
+                <form th:action="@{/sell}" th:object="${bookDto}" method="post">
+                    <!-- Title -->
+                    <div class="form-group">
+                        <label class="form-label" for="title">Book Title *</label>
+                        <input type="text" id="title" th:field="*{title}" class="form-control"
+                               th:classappend="${#fields.hasErrors('title')} ? 'is-invalid' : ''"
+                               placeholder="e.g. Operating System Concepts (Silberschatz 10th Ed)" required autofocus>
+                        <span class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+                    </div>
+
+                    <!-- Author -->
+                    <div class="form-group">
+                        <label class="form-label" for="author">Author(s) *</label>
+                        <input type="text" id="author" th:field="*{author}" class="form-control"
+                               th:classappend="${#fields.hasErrors('author')} ? 'is-invalid' : ''"
+                               placeholder="e.g. Abraham Silberschatz, Peter B. Galvin" required>
+                        <span class="invalid-feedback" th:if="${#fields.hasErrors('author')}" th:errors="*{author}"></span>
+                    </div>
+
+                    <!-- Course & Semester Grid -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="course">Course / Department *</label>
+                            <select id="course" th:field="*{course}" class="form-select"
+                                    th:classappend="${#fields.hasErrors('course')} ? 'is-invalid' : ''" required>
+                                <option value="">Select Academic Department</option>
+                                <option th:each="c : ${courses}" th:value="${c}" th:text="${c}"></option>
+                            </select>
+                            <span class="invalid-feedback" th:if="${#fields.hasErrors('course')}" th:errors="*{course}"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="semester">Semester *</label>
+                            <select id="semester" th:field="*{semester}" class="form-select"
+                                    th:classappend="${#fields.hasErrors('semester')} ? 'is-invalid' : ''" required>
+                                <option value="">Select Semester</option>
+                                <option th:each="s : ${semesters}" th:value="${s}" th:text="${s}"></option>
+                            </select>
+                            <span class="invalid-feedback" th:if="${#fields.hasErrors('semester')}" th:errors="*{semester}"></span>
+                        </div>
+                    </div>
+
+                    <!-- College -->
+                    <div class="form-group">
+                        <label class="form-label" for="college">College / University Name *</label>
+                        <input type="text" id="college" th:field="*{college}" class="form-control"
+                               th:classappend="${#fields.hasErrors('college')} ? 'is-invalid' : ''"
+                               placeholder="e.g. Apex Institute of Technology" required>
+                        <span class="invalid-feedback" th:if="${#fields.hasErrors('college')}" th:errors="*{college}"></span>
+                    </div>
+
+                    <!-- Price, Condition, and Listing Type Grid -->
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="price">Price (₹) *</label>
+                            <input type="number" step="0.5" min="0" id="price" th:field="*{price}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('price')} ? 'is-invalid' : ''"
+                                   placeholder="e.g. 350.00 (Enter 0 for Free/Exchange)" required>
+                            <span class="invalid-feedback" th:if="${#fields.hasErrors('price')}" th:errors="*{price}"></span>
+                            <div class="form-help">Enter 0 if you are offering for free swap or exchange.</div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="bookCondition">Book Condition *</label>
+                            <select id="bookCondition" th:field="*{bookCondition}" class="form-select"
+                                    th:classappend="${#fields.hasErrors('bookCondition')} ? 'is-invalid' : ''" required>
+                                <option value="">Select Condition</option>
+                                <option th:each="cond : ${conditions}" th:value="${cond}" th:text="${cond}"></option>
+                            </select>
+                            <span class="invalid-feedback" th:if="${#fields.hasErrors('bookCondition')}" th:errors="*{bookCondition}"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="listingType">Listing Type *</label>
+                            <select id="listingType" th:field="*{listingType}" class="form-select"
+                                    th:classappend="${#fields.hasErrors('listingType')} ? 'is-invalid' : ''" required>
+                                <option value="">Select Type</option>
+                                <option th:each="t : ${listingTypes}" th:value="${t}" th:text="${t}"></option>
+                            </select>
+                            <span class="invalid-feedback" th:if="${#fields.hasErrors('listingType')}" th:errors="*{listingType}"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="sellerContact">Seller Contact Info *</label>
+                            <input type="text" id="sellerContact" th:field="*{sellerContact}" class="form-control"
+                                   th:classappend="${#fields.hasErrors('sellerContact')} ? 'is-invalid' : ''"
+                                   placeholder="e.g. +91 98765 43210 or email" required>
+                            <span class="invalid-feedback" th:if="${#fields.hasErrors('sellerContact')}" th:errors="*{sellerContact}"></span>
+                        </div>
+                    </div>
+
+                    <!-- Additional Details / Description -->
+                    <div class="form-group">
+                        <label class="form-label" for="description">Additional Notes / Edition Info</label>
+                        <textarea id="description" th:field="*{description}" rows="3" class="form-textarea"
+                                  placeholder="Mention any highlights, CD included, or specific swap preferences..."></textarea>
+                    </div>
+
+                    <div style="display: flex; gap: 1rem; margin-top: 2rem;">
+                        <button type="submit" class="btn btn-primary" style="flex: 2;">
+                            🚀 Publish Book Listing
+                        </button>
+                        <a th:href="@{/home}" class="btn btn-outline" style="flex: 1;">
+                            Cancel
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>BookLoop © 2026 — Campus Book Exchange Platform | CSE College Project</p>
+    </footer>
+
+</body>
+</html>

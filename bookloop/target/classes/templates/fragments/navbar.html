@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<head></head>
+<body>
+    <nav th:fragment="navbar(activePage)" class="navbar">
+        <div class="nav-container">
+            <a th:href="@{/home}" class="brand">
+                <span class="brand-icon">📚</span>
+                <span>BookLoop</span>
+                <span class="brand-tag">Campus</span>
+            </a>
+
+            <ul class="nav-links">
+                <li>
+                    <a th:href="@{/home}" class="nav-link" th:classappend="${activePage == 'home'} ? 'active' : ''">
+                        🏠 Home
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/sell}" class="nav-link" th:classappend="${activePage == 'sell'} ? 'active' : ''">
+                        🏷️ Sell a Book
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/need}" class="nav-link" th:classappend="${activePage == 'need'} ? 'active' : ''">
+                        🙋 Need a Book
+                    </a>
+                </li>
+                <li>
+                    <a th:href="@{/cart}" class="nav-link" th:classappend="${activePage == 'cart'} ? 'active' : ''">
+                        🛒 Cart
+                        <span class="nav-badge" th:text="${cartItemCount}">0</span>
+                    </a>
+                </li>
+            </ul>
+
+            <div class="nav-user">
+                <div class="user-pill" th:if="${currentUser != null}">
+                    <div class="user-avatar" th:text="${#strings.substring(currentUser.name, 0, 1).toUpperCase()}">U</div>
+                    <span th:text="${currentUser.name}">Student</span>
+                </div>
+
+                <form th:action="@{/logout}" method="post" style="display: inline;">
+                    <button type="submit" class="logout-btn">
+                        🚪 Logout
+                    </button>
+                </form>
+            </div>
+        </div>
+    </nav>
+</body>
+</html>

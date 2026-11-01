@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookLoop — My Selected Books | Cart</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <div th:replace="~{fragments/navbar :: navbar('cart')}"></div>
+
+    <main class="main-content">
+        <!-- Notification Alerts -->
+        <div th:if="${infoMessage}" class="alert alert-info">
+            <span>ℹ️</span>
+            <span th:text="${infoMessage}">Information message</span>
+        </div>
+
+        <div class="section-header">
+            <div>
+                <h1 class="section-title">🛒 My Selected Books</h1>
+                <p style="font-size: 0.92rem; color: var(--text-muted);">
+                    Review books you have shortlisted to buy, rent, or exchange with student sellers.
+                </p>
+            </div>
+
+            <form th:if="${!cartItems.isEmpty()}" th:action="@{/cart/clear}" method="post">
+                <button type="submit" class="btn btn-outline btn-sm">
+                    🗑️ Clear Cart
+                </button>
+            </form>
+        </div>
+
+        <!-- Cart Layout -->
+        <div th:if="${!cartItems.isEmpty()}" class="cart-layout">
+            <!-- Left: Items List -->
+            <div class="cart-items-card">
+                <div class="cart-item" th:each="item : ${cartItems}">
+                    <div class="cart-item-details">
+                        <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 0.35rem;">
+                            <span class="type-badge"
+                                  th:classappend="${#strings.toLowerCase(item.book.listingType)}"
+                                  th:text="${item.book.listingType}">Sale</span>
+                            <span class="condition-pill" th:text="${item.book.bookCondition}">Like New</span>
+                        </div>
+
+                        <h3 style="font-size: 1.1rem; font-weight: 700; margin-bottom: 0.25rem;"
+                            th:text="${item.book.title}">Book Title</h3>
+                        <p style="font-size: 0.88rem; color: var(--text-muted); margin-bottom: 0.5rem;"
+                           th:text="'by ' + ${item.book.author}">by Author</p>
+
+                        <div style="font-size: 0.82rem; color: #475569; display: flex; flex-direction: column; gap: 0.2rem;">
+                            <span>🏛️ <strong th:text="${item.book.college}">College</strong></span>
+                            <span>📞 Contact Seller: <strong th:text="${item.book.sellerContact}">Contact</strong></span>
+                        </div>
+                    </div>
+
+                    <div style="text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 0.75rem;">
+                        <div th:if="${item.book.price > 0}" style="font-size: 1.25rem; font-weight: 800; color: #0f172a;"
+                             th:text="'₹ ' + ${#numbers.formatDecimal(item.book.price, 0, 'COMMA', 2, 'POINT')}">₹ 450.00</div>
+                        <div th:if="${item.book.price == 0}" class="book-price free" style="font-size: 0.95rem;">Free Exchange</div>
+
+                        <form th:action="@{'/cart/remove/' + ${item.id}}" method="post">
+                            <button type="submit" class="btn btn-danger btn-sm">
+                                ✕ Remove
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right: Summary Card -->
+            <aside class="cart-summary-card">
+                <h2 class="summary-title">Order & Contact Summary</h2>
+
+                <div class="summary-row">
+                    <span>Selected Textbooks</span>
+                    <strong th:text="${cartItems.size()} + ' item(s)'">0 items</strong>
+                </div>
+
+                <div class="summary-row">
+                    <span>Campus Handover</span>
+                    <span style="color: var(--success); font-weight: 600;">Free / On-Campus</span>
+                </div>
+
+                <div class="summary-total">
+                    <span>Total Amount</span>
+                    <span th:text="'₹ ' + ${#numbers.formatDecimal(totalPrice, 0, 'COMMA', 2, 'POINT')}">₹ 0.00</span>
+                </div>
+
+                <div style="margin-top: 1.5rem; padding: 1rem; background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; font-size: 0.85rem; color: #166534;">
+                    <strong>🤝 Direct Campus Handover:</strong><br>
+                    No online payments required! Simply message or call the student sellers listed on each card to arrange an in-person exchange on campus (e.g. library, canteen, or dept).
+                </div>
+
+                <a th:href="@{/home}" class="btn btn-outline btn-block" style="margin-top: 1.25rem;">
+                    ← Browse More Books
+                </a>
+            </aside>
+        </div>
+
+        <!-- Empty Cart State -->
+        <div th:if="${cartItems.isEmpty()}" class="empty-state">
+            <div class="empty-icon">🛒</div>
+            <h3 class="empty-title">Your Cart is Empty</h3>
+            <p class="empty-text">You haven't added any books to your exchange list yet. Browse the homepage to find textbooks for your semester!</p>
+            <a th:href="@{/home}" class="btn btn-primary">📚 Browse Campus Books</a>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>BookLoop © 2026 — Campus Book Exchange Platform | CSE College Project</p>
+    </footer>
+
+</body>
+</html>

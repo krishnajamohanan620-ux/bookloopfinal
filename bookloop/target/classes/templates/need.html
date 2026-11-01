@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookLoop — Need a Book | Campus Requests</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <div th:replace="~{fragments/navbar :: navbar('need')}"></div>
+
+    <main class="main-content">
+        <!-- Success Alert -->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span>✅</span>
+            <span th:text="${successMessage}">Your book request has been posted!</span>
+        </div>
+
+        <div class="page-container">
+            <!-- Request Form Card -->
+            <div class="form-card" style="margin-bottom: 3rem;">
+                <div class="form-header">
+                    <h1 class="form-title">🙋 Need a Book? Post a Request</h1>
+                    <p class="form-subtitle">Can't find the textbook you need for your upcoming semester or exams? Post a request to the campus board!</p>
+                </div>
+
+                <form th:action="@{/need}" th:object="${requestDto}" method="post">
+                    <div class="form-group">
+                        <label class="form-label" for="title">Book Title Needed *</label>
+                        <input type="text" id="title" th:field="*{title}" class="form-control"
+                               th:classappend="${#fields.hasErrors('title')} ? 'is-invalid' : ''"
+                               placeholder="e.g. Design Patterns: Elements of Reusable Object-Oriented Software" required autofocus>
+                        <span class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="author">Author (Optional)</label>
+                        <input type="text" id="author" th:field="*{author}" class="form-control"
+                               placeholder="e.g. Erich Gamma, Richard Helm (Gang of Four)">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label" for="course">Course / Department *</label>
+                            <select id="course" th:field="*{course}" class="form-select"
+                                    th:classappend="${#fields.hasErrors('course')} ? 'is-invalid' : ''" required>
+                                <option value="">Select Academic Department</option>
+                                <option th:each="c : ${courses}" th:value="${c}" th:text="${c}"></option>
+                            </select>
+                            <span class="invalid-feedback" th:if="${#fields.hasErrors('course')}" th:errors="*{course}"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label" for="semester">Semester *</label>
+                            <select id="semester" th:field="*{semester}" class="form-select"
+                                    th:classappend="${#fields.hasErrors('semester')} ? 'is-invalid' : ''" required>
+                                <option value="">Select Semester</option>
+                                <option th:each="s : ${semesters}" th:value="${s}" th:text="${s}"></option>
+                            </select>
+                            <span class="invalid-feedback" th:if="${#fields.hasErrors('semester')}" th:errors="*{semester}"></span>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="contactInfo">Your Contact Info (Phone / WhatsApp / Email) *</label>
+                        <input type="text" id="contactInfo" th:field="*{contactInfo}" class="form-control"
+                               th:classappend="${#fields.hasErrors('contactInfo')} ? 'is-invalid' : ''"
+                               placeholder="e.g. +91 98765 12345 or student email" required>
+                        <span class="invalid-feedback" th:if="${#fields.hasErrors('contactInfo')}" th:errors="*{contactInfo}"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label" for="notes">Notes / Urgency Details</label>
+                        <textarea id="notes" th:field="*{notes}" rows="2" class="form-textarea"
+                                  placeholder="e.g. Needed urgently before internal exams next week. Willing to rent or buy."></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">
+                        📢 Submit Book Request to Campus Board
+                    </button>
+                </form>
+            </div>
+
+            <!-- Community Requests Board -->
+            <div>
+                <div class="section-header">
+                    <div>
+                        <h2 class="section-title">📋 Active Campus Book Requests</h2>
+                        <p style="font-size: 0.9rem; color: var(--text-muted);">See what books your peers need and help them out</p>
+                    </div>
+                </div>
+
+                <div th:if="${!requests.isEmpty()}" class="requests-list">
+                    <div class="request-card" th:each="req : ${requests}">
+                        <div class="request-main">
+                            <h3 class="request-title" th:text="${req.title}">Book Title</h3>
+                            <div class="request-meta">
+                                <span th:if="${req.author != null and !req.author.isEmpty()}" th:text="'✍️ ' + ${req.author}">Author</span>
+                                <span th:text="'🎓 ' + ${req.course}">Course</span>
+                                <span th:text="'📅 ' + ${req.semester}">Semester</span>
+                            </div>
+                            <div class="request-notes" th:if="${req.notes != null and !req.notes.isEmpty()}"
+                                 th:text="'📝 ' + ${req.notes}">Notes...</div>
+                            <div class="request-contact">
+                                <span>💬 Reach Requester: </span>
+                                <span th:text="${req.contactInfo}">Contact Info</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div th:if="${requests.isEmpty()}" class="empty-state">
+                    <div class="empty-icon">🤝</div>
+                    <h3 class="empty-title">No pending book requests</h3>
+                    <p class="empty-text">Currently there are no open book requests from campus students. If you need any book, use the form above to post one!</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>BookLoop © 2026 — Campus Book Exchange Platform | CSE College Project</p>
+    </footer>
+
+</body>
+</html>

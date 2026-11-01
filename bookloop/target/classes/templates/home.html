@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BookLoop — Campus Book Exchange Platform | Home</title>
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+
+    <!-- Sticky Navigation Bar Fragment -->
+    <div th:replace="~{fragments/navbar :: navbar('home')}"></div>
+
+    <main class="main-content">
+        <!-- Notification Alerts -->
+        <div th:if="${successMessage}" class="alert alert-success">
+            <span>✅</span>
+            <span th:text="${successMessage}">Success message</span>
+        </div>
+
+        <div th:if="${infoMessage}" class="alert alert-info">
+            <span>ℹ️</span>
+            <span th:text="${infoMessage}">Information message</span>
+        </div>
+
+        <!-- Campus Hero Banner -->
+        <section class="hero-section">
+            <h1 class="hero-title">Campus Book Exchange Platform 🎓</h1>
+            <p class="hero-subtitle">
+                Save money, help fellow students, and exchange academic textbooks directly within your college campus. Buy, sell, rent, or swap course materials easily.
+            </p>
+            <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+                <a th:href="@{/sell}" class="btn" style="background: white; color: var(--primary); font-weight: 700;">
+                    ➕ List a Book for Sale / Swap
+                </a>
+                <a th:href="@{/need}" class="btn" style="background: rgba(255,255,255,0.2); color: white; border: 1px solid rgba(255,255,255,0.4);">
+                    🙋 Request a Book You Need
+                </a>
+            </div>
+        </section>
+
+        <!-- Search & Filter Card -->
+        <section class="search-filter-card">
+            <form th:action="@{/home}" method="get" class="search-form-grid">
+                <!-- Keyword search -->
+                <div>
+                    <input type="text" name="keyword" th:value="${keyword}"
+                           class="form-control" placeholder="🔍 Search book title or author...">
+                </div>
+
+                <!-- Course filter -->
+                <div>
+                    <select name="course" class="form-select">
+                        <option value="">All Academic Courses</option>
+                        <option th:each="c : ${courses}" th:value="${c}" th:text="${c}"
+                                th:selected="${c == selectedCourse}"></option>
+                    </select>
+                </div>
+
+                <!-- Semester filter -->
+                <div>
+                    <select name="semester" class="form-select">
+                        <option value="">All Semesters</option>
+                        <option th:each="s : ${semesters}" th:value="${s}" th:text="${s}"
+                                th:selected="${s == selectedSemester}"></option>
+                    </select>
+                </div>
+
+                <!-- Submit Filter Button -->
+                <div>
+                    <button type="submit" class="btn btn-primary" style="white-space: nowrap;">
+                        Filter
+                    </button>
+                </div>
+
+                <!-- Reset Filter Button -->
+                <div>
+                    <a th:href="@{/home}" class="btn btn-outline" style="white-space: nowrap;">
+                        Reset
+                    </a>
+                </div>
+            </form>
+        </section>
+
+        <!-- Academic Book Feed Header -->
+        <div class="section-header">
+            <div>
+                <h2 class="section-title">Available Textbooks</h2>
+                <p style="font-size: 0.9rem; color: var(--text-muted);"
+                   th:text="${books.size()} + ' academic book(s) found on campus'"></p>
+            </div>
+        </div>
+
+        <!-- Books Grid -->
+        <div th:if="${!books.isEmpty()}" class="books-grid">
+            <article class="book-card" th:each="book : ${books}">
+                <!-- Card Header: Badges -->
+                <div class="book-card-top">
+                    <span class="type-badge"
+                          th:classappend="${#strings.toLowerCase(book.listingType)}"
+                          th:text="${book.listingType}">Sale</span>
+                    <span class="condition-pill" th:text="${book.bookCondition}">Like New</span>
+                </div>
+
+                <!-- Card Body -->
+                <div class="book-card-body">
+                    <h3 class="book-title" th:text="${book.title}">Introduction to Algorithms</h3>
+                    <p class="book-author" th:text="'by ' + ${book.author}">by Thomas Cormen</p>
+
+                    <div class="book-tags">
+                        <span class="book-tag" th:text="${book.course}">Computer Science</span>
+                        <span class="book-tag" th:text="${book.semester}">Semester 4</span>
+                    </div>
+
+                    <p class="book-desc" th:if="${book.description != null and !book.description.isEmpty()}"
+                       th:text="${book.description}">Description text...</p>
+
+                    <div class="book-seller-info">
+                        <div class="seller-line">
+                            <span>🏛️</span>
+                            <span th:text="${book.college}">College Name</span>
+                        </div>
+                        <div class="seller-line">
+                            <span>📞</span>
+                            <span th:text="${book.sellerContact}">Seller Contact</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Card Footer: Price & Add to Cart -->
+                <div class="book-card-footer">
+                    <div>
+                        <div th:if="${book.price > 0}" class="book-price"
+                             th:text="'₹ ' + ${#numbers.formatDecimal(book.price, 0, 'COMMA', 2, 'POINT')}">₹ 450.00</div>
+                        <div th:if="${book.price == 0}" class="book-price free">Free Exchange / Swap</div>
+                    </div>
+
+                    <form th:action="@{'/cart/add/' + ${book.id}}" method="post">
+                        <button type="submit" class="btn btn-primary btn-sm">
+                            🛒 Add to Cart
+                        </button>
+                    </form>
+                </div>
+            </article>
+        </div>
+
+        <!-- Empty State if no books found -->
+        <div th:if="${books.isEmpty()}" class="empty-state">
+            <div class="empty-icon">📖</div>
+            <h3 class="empty-title">No books found</h3>
+            <p class="empty-text">No academic textbooks matched your current search and filters. Try adjusting your search or be the first to list one!</p>
+            <a th:href="@{/sell}" class="btn btn-primary">➕ List This Book for Sale</a>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <p>BookLoop © 2026 — Campus Book Exchange Platform | CSE College Project</p>
+    </footer>
+
+</body>
+</html>
